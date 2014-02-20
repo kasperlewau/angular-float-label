@@ -1,0 +1,27 @@
+{
+  "name": "angular-float-label",
+  "version": "0.0.0",
+  "authors": [
+    "Kasper Lewau <lewauu@gmail.com>"
+  ],
+  "description": "an implementation of the floating label pattern",
+  "main": "angular-float-label.js",
+  "keywords": [
+    "angular",
+    "float-label",
+    "floating-label"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/kasperlewau/angular-float-label",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.2.0"
+  }
+}
