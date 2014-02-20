@@ -1,5 +1,5 @@
-angular.module('kasper-lewau.angular-float-label', []).
-  directive('klFloatLabel', function () {
+angular.module('kasperlewau.angular-float-label', []).
+  directive('floatLabel', function () {
     var def = { popClass: 'fl-populated', focClass: 'fl-focused' };
     return {
       restrict: "A",
