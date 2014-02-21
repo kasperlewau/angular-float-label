@@ -57,7 +57,7 @@ var app = angular.module('myModule', ['kasperlewau.angular-float-label', ...]);
 ```
 
 ### To-dos
-- [ ] Move away from the oh-so-stupid setTimeout() on init.
+- [ x ] Move away from the oh-so-stupid setTimeout() on init.
 - [ ] Move DOM transforming to compile().
 - [ ] Add hosted demo with examples.
 
