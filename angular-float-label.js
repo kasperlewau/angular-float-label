@@ -28,9 +28,19 @@ angular.module('kasperlewau.angular-float-label', []).
       },
       link: function (scope, el, attrs, ngModel) {
         var position  = el.parent();
-        var wrap      = angular.element(scope.createWrapper());
+        var wrapper   = angular.element(scope.createWrapper());
         var label     = angular.element(scope.createLabel());
         var labelText = label[0].innerHTML;
+
+        var wrap = function (elem, wrapper) {
+          wrapper = wrapper || document.createElement('div');
+          if (elem.nextSibling) {
+            elem.parentNode.insertBefore(wrapper, elem.nextSibling);
+          } else {
+            elem.parentNode.appendChild(wrapper);
+          }
+          return wrapper.appendChild(elem);
+        };
 
         // Massive fucking YUCK. This needs to go ASAP!
         // Sorry-ass hack for the NaN $viewValues on init.
@@ -39,30 +49,29 @@ angular.module('kasperlewau.angular-float-label', []).
         }, 1);
 
         // Setup the DOM. Should probably move this into a compile() function.
-        wrap.append(label);
-        wrap.append(el);
-        angular.element(position).append(wrap);
+        wrap(el[0], wrapper[0]);
+        wrapper.prepend(label);
 
         // Move the label out of the input on focus.
         // Set the input value to empty if it equals the label (init).
         el.bind('focus', function () {
-          wrap.addClass(def.focClass);
+          wrapper.addClass(def.focClass);
           if ( el[0].value === labelText ) { el[0].value = ""; }
         });
 
         // Move the label into the input on focus if no value is set.
         el.bind('blur', function () {
-          wrap.removeClass(def.focClass);
+          wrapper.removeClass(def.focClass);
           if ( el[0].value === "" ) {
             el[0].value = labelText;
-            wrap.removeClass(def.popClass);
+            wrapper.removeClass(def.popClass);
           }
         });
 
         // Send input value to the model.
         el.bind('input', function () {
           var val = el[0].value !== "" ? el[0].value : "";
-          wrap.addClass(def.popClass);
+          wrapper.addClass(def.popClass);
           scope.$apply(function () {
             ngModel.$setViewValue(val);
           });
