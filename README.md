@@ -12,8 +12,8 @@ $ bower install kasperlewau/angular-float-label
 
 ### Inclusion
 
-```javascript
-var app = angular.module('myModule', ['kasperlewau.angular-float-label', ...]);
+```js
+var app = angular.module('myModule', ['kl.angular-float-label', ...]);
 ```
 
 ### Example
@@ -21,7 +21,8 @@ var app = angular.module('myModule', ['kasperlewau.angular-float-label', ...]);
 ![alt text](http://cl.ly/image/192v0U053F1I/out2.gif "out2.gif")
 
 ### Useage
-```scss
+
+```css
 .fl-input, .fl-textarea {
   position: relative;
   input, label, textarea {
@@ -62,9 +63,15 @@ var app = angular.module('myModule', ['kasperlewau.angular-float-label', ...]);
 ```
 
 ### To-dos
-- [ x ] Move away from the oh-so-stupid setTimeout() on init.
+- [ ] Write tests
+- [x] Move away from the oh-so-stupid setTimeout() on init.
 - [ ] Move DOM transforming to compile().
-- [ ] Add hosted demo with examples.
+- [ ] Add hosted demo with examples // Improve README.
+- [ ] Add support for passed in opts as args
+  - [ ] Classes
+  - [ ] Animation
+  - [ ] Predefined type
+- [ ] Probably 100 other things I've yet to think of.
 
 ### License
 

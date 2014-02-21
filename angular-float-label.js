@@ -1,4 +1,4 @@
-angular.module('kasperlewau.angular-float-label', []).
+angular.module('kl.angular-float-label', []).
   directive('floatLabel', function () {
     var def = { popClass: 'fl-populated', focClass: 'fl-focused' };
     return {
