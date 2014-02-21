@@ -5,6 +5,7 @@ angular.module('kl.angular-float-label', []).
       restrict: "A",
       require: 'ngModel',
       replace: true,
+
       controller: function ($scope, $element, $attrs) {
         // Set the name of the input field
         $element[0].name = $attrs.ngModel.replace('.', '-');
@@ -44,8 +45,14 @@ angular.module('kl.angular-float-label', []).
 
         // Slightly less yuck than the setTimeout() version.
         // Still not super happy about this though..
-        var unbindInit = scope.$watch(attrs.ngModel, function (x) {
-          !x ? el[0].value = labelText : wrapper.addClass(def.popClass);
+        var init = scope.$watch(attrs.ngModel, function (x) {
+          var notFocused = document.activeElement !== el[0];
+          if ( x ) {
+            wrapper.addClass(def.popClass);
+          } else {
+            if ( notFocused ) { el[0].value = labelText; }
+            wrapper.removeClass(def.popClass);
+          }
         });
 
         // Setup the DOM. Should probably move this into a compile() function.
@@ -55,8 +62,6 @@ angular.module('kl.angular-float-label', []).
         // Move the label out of the input on focus.
         // Set the input value to empty if it equals the label (init).
         el.bind('focus', function () {
-          // unbind the initial watcher.
-          unbindInit();
           wrapper.addClass(def.focClass);
           if ( el[0].value === labelText ) { el[0].value = ""; }
         });
@@ -73,7 +78,7 @@ angular.module('kl.angular-float-label', []).
         // Send input value to the model.
         el.bind('input', function () {
           var val = el[0].value !== "" ? el[0].value : "";
-          wrapper.addClass(def.popClass);
+          val ? wrapper.addClass(def.popClass) : wrapper.removeClass(def.popClass);
           scope.$apply(function () {
             ngModel.$setViewValue(val);
           });
