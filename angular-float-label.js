@@ -42,19 +42,21 @@ angular.module('kasperlewau.angular-float-label', []).
           return wrapper.appendChild(elem);
         };
 
-        // Massive fucking YUCK. This needs to go ASAP!
-        // Sorry-ass hack for the NaN $viewValues on init.
-        setTimeout(function () {
-          !ngModel.$viewValue ? el[0].value = labelText : wrap.addClass(def.popClass);
-        }, 1);
+        // Slightly less yuck than the setTimeout() version.
+        // Still not super happy about this though..
+        var unbindInit = scope.$watch(attrs.ngModel, function (x) {
+          !x ? el[0].value = labelText : wrapper.addClass(def.popClass);
+        });
 
         // Setup the DOM. Should probably move this into a compile() function.
-        wrap(el[0], wrapper[0]);
         wrapper.prepend(label);
+        wrap(el[0], wrapper[0]);
 
         // Move the label out of the input on focus.
         // Set the input value to empty if it equals the label (init).
         el.bind('focus', function () {
+          // unbind the initial watcher.
+          unbindInit();
           wrapper.addClass(def.focClass);
           if ( el[0].value === labelText ) { el[0].value = ""; }
         });
