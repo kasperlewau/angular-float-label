@@ -16,6 +16,10 @@ $ bower install kasperlewau/angular-float-label
 var app = angular.module('myModule', ['kasperlewau.angular-float-label', ...]);
 ```
 
+### Example
+
+![alt text](http://cl.ly/image/192v0U053F1I "out2.gif")
+
 ### Useage
 ```css
 .fl-input, .fl-textarea {
