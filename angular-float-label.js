@@ -16,9 +16,26 @@ angular.module('kl.angular-float-label', []).
           var html  = '<div class="' + elTag + '"></div>';
           return angular.element(html);
         };
+
         $scope.createLabel = function (elId, txt) {
           var html = '<label for="' + elId + '">' + txt + '</label>';
           return angular.element(html);
+        };
+
+        $scope.focus = function (wrap, val) {
+          wrap.addClass(def.focClass);
+          if ( this.value === val ) { this.value = ""; }
+        };
+
+        $scope.blur = function (wrap, val) {
+          wrap.removeClass(def.focClass);
+          if ( this.value === "" ) { this.value = val; }
+        };
+
+        $scope.input = function (wrap, ngModel) {
+          var val = this.value !== "" ? this.value : "";
+          val ? wrap.addClass(def.popClass) : wrap.removeClass(def.popClass);
+          $scope.$apply(function () { ngModel.$setViewValue(val); });
         };
       },
       link: function (scope, el, attrs, ngModel, transclude) {
@@ -41,22 +58,9 @@ angular.module('kl.angular-float-label', []).
           }
         });
 
-        cEl.bind('focus', function () {
-          wrap.addClass(def.focClass);
-          if ( cEl[0].value === labelTxt ) { cEl[0].value = ""; }
-        });
-
-        cEl.bind('blur', function () {
-          wrap.removeClass(def.focClass);
-          if ( cEl[0].value === "" ) { cEl[0].value = labelTxt; }
-          // wrapper.removeClass(def.popClass);
-        });
-
-        cEl.bind('input', function () {
-          var val = cEl[0].value !== "" ? cEl[0].value : "";
-          val ? wrap.addClass(def.popClass) : wrap.removeClass(def.popClass);
-          scope.$apply(function () { ngModel.$setViewValue(val); });
-        });
+        cEl.bind('focus', scope.focus.bind(cEl[0], wrap, labelTxt));
+        cEl.bind('blur', scope.blur.bind(cEl[0], wrap, labelTxt));
+        cEl.bind('input', scope.input.bind(cEl[0], wrap, ngModel));
       }
     }
   });
