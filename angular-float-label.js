@@ -40,7 +40,9 @@ angular.module('kl.angular-float-label', []).
         };
 
       },
-      link: function (scope, el, attrs, controllers, transclude) {
+      link: function (scope, el, attrs, ctrl, transclude) {
+        var form     = ctrl[0];
+        var ngModel  = ctrl[1];
         var cEl      = transclude(scope, function (clone) { return clone; });
         var elId     = attrs.ngModel.replace('.', '-');
         var wrap     = scope.createWrapper(cEl);
@@ -62,7 +64,7 @@ angular.module('kl.angular-float-label', []).
 
         cEl.bind('focus', scope.focus.bind(cEl[0], wrap, labelTxt));
         cEl.bind('blur', scope.blur.bind(cEl[0], wrap, labelTxt));
-        cEl.bind('input', scope.input.bind(cEl[0], wrap, controllers[1]));
+        cEl.bind('input', scope.input.bind(cEl[0], wrap, ngModel));
       }
     }
   });
