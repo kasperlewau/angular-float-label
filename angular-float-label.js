@@ -8,7 +8,7 @@ angular.module('kl.angular-float-label', []).
     };
     return {
       restrict: "A",
-      require: ['?form', 'ngModel'],
+      require: ['^?form', 'ngModel'],
       transclude: 'element',
       scope: {},
       controller: function ($scope, $element, $attrs, $transclude) {
