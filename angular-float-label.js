@@ -11,31 +11,25 @@ angular.module('kl.angular-float-label', []).
       require: 'ngModel',
       transclude: 'element',
       controller: function ($scope, $element, $attrs, $transclude) {
-        $transclude($scope, function (clone) {
-          $scope.createWrapper = function () {
-            var elTag = clone[0].tagName === 'TEXTAREA' ? def.txtClass : def.inpClass;
-            var html  = '<div class="' + elTag + '"></div>';
-            return angular.element(html);
-          };
-
-          $scope.createLabel = function (elId, txt) {
-            var html = '<label for="' + elId + '">' + txt + '</label>';
-            return angular.element(html);
-          };
-        });
+        $scope.createWrapper = function (el) {
+          var elTag = el[0].tagName === 'TEXTAREA' ? def.txtClass : def.inpClass;
+          var html  = '<div class="' + elTag + '"></div>';
+          return angular.element(html);
+        };
+        $scope.createLabel = function (elId, txt) {
+          var html = '<label for="' + elId + '">' + txt + '</label>';
+          return angular.element(html);
+        };
       },
       link: function (scope, el, attrs, ngModel, transclude) {
-        var cEl      = null;
-        var elId     = attrs.ngModel.replace('.', '-');
-        var wrap     = scope.createWrapper();
+        var cEl      = transclude(scope, function (clone) { return clone; });
+        var wrap     = scope.createWrapper(cEl);
         var label    = scope.createLabel(elId, attrs.floatLabel);
+        var elId     = attrs.ngModel.replace('.', '-');
         var labelTxt = label[0].innerHTML
 
-        transclude(scope, function (clone) {
-          cEl = clone;
-          clone[0].name = elId;
-          el.after(wrap.append(clone).prepend(label));
-        });
+        cEl[0].name = elId;
+        el.after(wrap.append(cEl).prepend(label));
 
         var init = scope.$watch(attrs.ngModel, function (x) {
           var notFocused = document.activeElement !== cEl[0];
