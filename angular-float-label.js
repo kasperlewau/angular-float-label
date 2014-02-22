@@ -54,8 +54,11 @@ angular.module('kl.angular-float-label', []).
           if ( x ) {
             cEl[0].value = x;
             wrap.addClass(def.popClass);
-          } else if ( notFocused ) {
-            cEl[0].value = labelTxt;
+          } else  {
+            wrap.removeClass(def.popClass);
+            if ( notFocused ) {
+              cEl[0].value = labelTxt;
+            }
           }
         });
 
