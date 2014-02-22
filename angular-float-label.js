@@ -34,6 +34,7 @@ angular.module('kl.angular-float-label', []).
         var init = scope.$watch(attrs.ngModel, function (x) {
           var notFocused = document.activeElement !== cEl[0];
           if ( x ) {
+            cEl[0].value = x;
             wrap.addClass(def.popClass);
           } else {
             if ( notFocused ) { cEl[0].value = labelTxt; }
