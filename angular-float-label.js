@@ -1,87 +1,66 @@
 angular.module('kl.angular-float-label', []).
   directive('floatLabel', function () {
-    var def = { popClass: 'fl-populated', focClass: 'fl-focused' };
+    var def = {
+      inpClass: 'fl-input',
+      txtClass: 'fl-textarea',
+      popClass: 'fl-populated',
+      focClass: 'fl-focused'
+    };
     return {
       restrict: "A",
       require: 'ngModel',
-      replace: true,
+      transclude: 'element',
+      controller: function ($scope, $element, $attrs, $transclude) {
+        $transclude($scope, function (clone) {
+          $scope.createWrapper = function () {
+            var elTag = clone[0].tagName === 'TEXTAREA' ? def.txtClass : def.inpClass;
+            var html  = '<div class="' + elTag + '"></div>';
+            return angular.element(html);
+          };
 
-      controller: function ($scope, $element, $attrs) {
-        // Set the name of the input field
-        $element[0].name = $attrs.ngModel.replace('.', '-');
-
-        // Create a wrapping div for styling purposes.
-        $scope.createWrapper = function () {
-          var klass = $element[0].nodeName === "TEXTAREA" ? 'fl-textarea' : 'fl-input';
-          var wrap  = document.createElement('div');
-          wrap.classList.add(klass);
-          return wrap;
-        };
-
-        // Create a label with the for pointed to the input field.
-        $scope.createLabel = function () {
-          var label        = document.createElement('label');
-          label.htmlFor    = $element[0].name;
-          label.innerHTML  = $attrs.floatLabel;
-          return label;
-        };
-
+          $scope.createLabel = function (elId, txt) {
+            var html = '<label for="' + elId + '">' + txt + '</label>';
+            return angular.element(html);
+          };
+        });
       },
-      link: function (scope, el, attrs, ngModel) {
-        var position  = el.parent();
-        var wrapper   = angular.element(scope.createWrapper());
-        var label     = angular.element(scope.createLabel());
-        var labelText = label[0].innerHTML;
+      link: function (scope, el, attrs, ngModel, transclude) {
+        var cEl      = null;
+        var elId     = attrs.ngModel.replace('.', '-');
+        var wrap     = scope.createWrapper();
+        var label    = scope.createLabel(elId, attrs.floatLabel);
+        var labelTxt = label[0].innerHTML
 
-        var wrap = function (elem, wrapper) {
-          wrapper = wrapper || document.createElement('div');
-          if (elem.nextSibling) {
-            elem.parentNode.insertBefore(wrapper, elem.nextSibling);
-          } else {
-            elem.parentNode.appendChild(wrapper);
-          }
-          return wrapper.appendChild(elem);
-        };
+        transclude(scope, function (clone) {
+          cEl = clone;
+          clone[0].name = elId;
+          el.after(wrap.append(clone).prepend(label));
+        });
 
-        // Slightly less yuck than the setTimeout() version.
-        // Still not super happy about this though..
         var init = scope.$watch(attrs.ngModel, function (x) {
-          var notFocused = document.activeElement !== el[0];
+          var notFocused = document.activeElement !== cEl[0];
           if ( x ) {
-            wrapper.addClass(def.popClass);
+            wrap.addClass(def.popClass);
           } else {
-            if ( notFocused ) { el[0].value = labelText; }
-            wrapper.removeClass(def.popClass);
+            if ( notFocused ) { cEl[0].value = labelTxt; }
           }
         });
 
-        // Setup the DOM. Should probably move this into a compile() function.
-        wrapper.prepend(label);
-        wrap(el[0], wrapper[0]);
-
-        // Move the label out of the input on focus.
-        // Set the input value to empty if it equals the label (init).
-        el.bind('focus', function () {
-          wrapper.addClass(def.focClass);
-          if ( el[0].value === labelText ) { el[0].value = ""; }
+        cEl.bind('focus', function () {
+          wrap.addClass(def.focClass);
+          if ( cEl[0].value === labelTxt ) { cEl[0].value = ""; }
         });
 
-        // Move the label into the input on focus if no value is set.
-        el.bind('blur', function () {
-          wrapper.removeClass(def.focClass);
-          if ( el[0].value === "" ) {
-            el[0].value = labelText;
-            wrapper.removeClass(def.popClass);
-          }
+        cEl.bind('blur', function () {
+          wrap.removeClass(def.focClass);
+          if ( cEl[0].value === "" ) { cEl[0].value = labelTxt; }
+          // wrapper.removeClass(def.popClass);
         });
 
-        // Send input value to the model.
-        el.bind('input', function () {
-          var val = el[0].value !== "" ? el[0].value : "";
-          val ? wrapper.addClass(def.popClass) : wrapper.removeClass(def.popClass);
-          scope.$apply(function () {
-            ngModel.$setViewValue(val);
-          });
+        cEl.bind('input', function () {
+          var val = cEl[0].value !== "" ? cEl[0].value : "";
+          val ? wrap.addClass(def.popClass) : wrap.removeClass(def.popClass);
+          scope.$apply(function () { ngModel.$setViewValue(val); });
         });
       }
     }
