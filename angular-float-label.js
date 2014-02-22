@@ -8,8 +8,9 @@ angular.module('kl.angular-float-label', []).
     };
     return {
       restrict: "A",
-      require: 'ngModel',
+      require: ['?form', 'ngModel'],
       transclude: 'element',
+      scope: {},
       controller: function ($scope, $element, $attrs, $transclude) {
         $scope.createWrapper = function (el) {
           var elTag = el[0].tagName === 'TEXTAREA' ? def.txtClass : def.inpClass;
@@ -39,14 +40,14 @@ angular.module('kl.angular-float-label', []).
         };
 
       },
-      link: function (scope, el, attrs, ngModel, transclude) {
+      link: function (scope, el, attrs, controllers, transclude) {
         var cEl      = transclude(scope, function (clone) { return clone; });
+        var elId     = attrs.ngModel.replace('.', '-');
         var wrap     = scope.createWrapper(cEl);
         var label    = scope.createLabel(elId, attrs.floatLabel);
-        var elId     = attrs.ngModel.replace('.', '-');
-        var labelTxt = label[0].innerHTML
+        var labelTxt = label[0].innerHTML;
 
-        var init = scope.$watch(attrs.ngModel, function (x) {
+        var init = scope.$parent.$watch(attrs.ngModel, function (x) {
           var notFocused = document.activeElement !== cEl[0];
           if ( x ) {
             cEl[0].value = x;
@@ -61,7 +62,7 @@ angular.module('kl.angular-float-label', []).
 
         cEl.bind('focus', scope.focus.bind(cEl[0], wrap, labelTxt));
         cEl.bind('blur', scope.blur.bind(cEl[0], wrap, labelTxt));
-        cEl.bind('input', scope.input.bind(cEl[0], wrap, ngModel));
+        cEl.bind('input', scope.input.bind(cEl[0], wrap, controllers[1]));
       }
     }
   });
