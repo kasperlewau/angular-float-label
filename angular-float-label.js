@@ -22,14 +22,14 @@ angular.module('kl.angular-float-label', []).
           return angular.element(html);
         };
 
-        $scope.focus = function (wrap, val) {
+        $scope.focus = function (wrap, txt) {
           wrap.addClass(def.focClass);
-          if ( this.value === val ) { this.value = ""; }
+          if ( this.value === txt ) { this.value = ""; }
         };
 
-        $scope.blur = function (wrap, val) {
+        $scope.blur = function (wrap, txt) {
           wrap.removeClass(def.focClass);
-          if ( this.value === "" ) { this.value = val; }
+          if ( this.value === "" ) { this.value = txt; }
         };
 
         $scope.input = function (wrap, ngModel) {
@@ -37,6 +37,7 @@ angular.module('kl.angular-float-label', []).
           val ? wrap.addClass(def.popClass) : wrap.removeClass(def.popClass);
           $scope.$apply(function () { ngModel.$setViewValue(val); });
         };
+
       },
       link: function (scope, el, attrs, ngModel, transclude) {
         var cEl      = transclude(scope, function (clone) { return clone; });
@@ -45,18 +46,18 @@ angular.module('kl.angular-float-label', []).
         var elId     = attrs.ngModel.replace('.', '-');
         var labelTxt = label[0].innerHTML
 
-        cEl[0].name = elId;
-        el.after(wrap.append(cEl).prepend(label));
-
         var init = scope.$watch(attrs.ngModel, function (x) {
           var notFocused = document.activeElement !== cEl[0];
           if ( x ) {
             cEl[0].value = x;
             wrap.addClass(def.popClass);
-          } else {
-            if ( notFocused ) { cEl[0].value = labelTxt; }
+          } else if ( notFocused ) {
+            cEl[0].value = labelTxt;
           }
         });
+
+        cEl[0].name = elId;
+        el.after(wrap.append(cEl).prepend(label));
 
         cEl.bind('focus', scope.focus.bind(cEl[0], wrap, labelTxt));
         cEl.bind('blur', scope.blur.bind(cEl[0], wrap, labelTxt));
