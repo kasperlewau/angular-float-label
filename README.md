@@ -66,7 +66,8 @@ var app = angular.module('myModule', ['kl.angular-float-label', ...]);
 - [ ] Write tests
 - [x] Move away from the oh-so-stupid setTimeout() on init.
 - [ ] Handle HTML5 inline validation (its broken).
-- [ ] Move DOM transforming to compile().
+- [/] Move DOM transforming to compile().
+  - [x] Make use of transclude over document.createEl()
 - [ ] Add hosted demo with examples // Improve README.
 - [ ] Add support for passed in opts as args
   - [ ] Classes
