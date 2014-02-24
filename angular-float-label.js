@@ -72,4 +72,4 @@ angular.module('kl.angular-float-label', [])
     };
 
     return linker;
-  })
+  });
