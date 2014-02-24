@@ -43,19 +43,19 @@ angular.module('kl.angular-float-label', [])
 
     var focusFn = function (wrapEl, txt) {
       wrapEl.addClass(opts.focClass);
-      if ( this.placeholder ) {
-        if ( this.attr('placeholder') === txt ) { this.attr('placeholder', ''); }
-      } else {
-        if ( this[0].value === txt ) { this[0].value = ""; }
+      if ( this.placeholder && this.attr('placeholder') === txt ) {
+        this.attr('placeholder', '')
+      } else if ( this[0].value === txt ) {
+        this[0].value = "";
       }
     };
 
     var blurFn = function (wrapEl, txt) {
       wrapEl.removeClass(opts.focClass);
-      if ( this.placeholder ) {
-        if ( this.attr('placeholder') === '' ) { this.attr('placeholder', txt); }
-      } else {
-        if ( this[0].value === "" ) { this[0].value = txt; }
+      if ( this.placeholder && this.attr('placeholder') === '') {
+        this.attr('placeholder', txt);
+      } else if ( this[0].value === '') {
+        this[0].value = txt;
       }
     };
 
