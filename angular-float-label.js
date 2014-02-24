@@ -61,7 +61,7 @@ angular.module('kl.angular-float-label', [])
       }
     };
 
-    var inputFn = function (wrapEl, ngModel) {
+    var inputFn = function (wrapEl) {
       this.attr('placeholder', '');
       val = this[0].value !== "" ? this[0].value : "";
       val ? wrapEl.addClass(opts.popClass) : wrapEl.removeClass(opts.popClass);
@@ -70,8 +70,7 @@ angular.module('kl.angular-float-label', [])
     var linker = {
       restrict: "A",
       scope: {},
-      require: 'ngModel',
-      link: function (scope, el, attrs, ngModel) {
+      link: function (scope, el, attrs) {
         var elId     = attrs.ngModel.replace('.', '-');
         var labelTxt = attrs.floatLabel;
         var wrapEl   = createWrap(el)(scope);
@@ -84,7 +83,7 @@ angular.module('kl.angular-float-label', [])
 
         el.bind('focus', focusFn.bind(el, wrapEl, labelTxt));
         el.bind('blur', blurFn.bind(el, wrapEl, labelTxt));
-        el.bind('input', inputFn.bind(el, wrapEl, ngModel));
+        el.bind('input', inputFn.bind(el, wrapEl));
       }
     };
 
