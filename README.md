@@ -65,9 +65,10 @@ var app = angular.module('myModule', ['kl.angular-float-label', ...]);
 ### To-dos
 - [ ] Write tests
 - [x] Move away from the oh-so-stupid setTimeout() on init.
-- [ ] Handle HTML5 inline validation (its broken).
-- [/] Move DOM transforming to compile().
-  - [x] Make use of transclude over document.createEl()
+- [/] Handle HTML5 inline validation (its broken).
+  - [ ] Conditional placeholder attributes + inherited styling to enable HTML5 validations.
+- [x] Move DOM transforming to compile().
+  - [/] Not fully switched to compile(), working as of now however.
 - [ ] Add hosted demo with examples // Improve README.
 - [ ] Add support for passed in opts as args
   - [ ] Classes
