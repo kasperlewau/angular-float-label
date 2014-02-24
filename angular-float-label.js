@@ -7,6 +7,10 @@ angular.module('kl.angular-float-label', [])
       focClass: 'fl-focused'
     };
 
+    var checkPlaceholder = function () {
+      return ('placeholder' in document.createElement('input'));
+    };
+
     var createWrap = function (el) {
       var type = el[0].tagName === 'TEXTAREA' ? opts.txtClass : opts.inpClass;
       return $compile('<div class="' + type + '"></div>');
@@ -24,14 +28,14 @@ angular.module('kl.angular-float-label', [])
 
     var init = function (scope, el, attrs, wrapEl, labelTxt) {
       return scope.$parent.$watch(attrs.ngModel, function (x) {
-        var notFocused = document.activeElement !== el[0];
+        var notFocused  = document.activeElement !== el[0];
         if ( x ) {
-          el[0].value = x;
+          el.placeholder ? el.attr('placeholder', x) : el[0].value = x;
           wrapEl.addClass(opts.popClass);
         } else {
           wrapEl.removeClass(opts.popClass);
           if ( notFocused ) {
-            el[0].value = labelTxt;
+            el.placeholder ? el.attr('placeholder', labelTxt) : el[0].value = labelTxt;
           }
         }
       });
@@ -39,16 +43,25 @@ angular.module('kl.angular-float-label', [])
 
     var focusFn = function (wrapEl, txt) {
       wrapEl.addClass(opts.focClass);
-      if ( this.value === txt ) { this.value = ""; }
+      if ( this.placeholder ) {
+        if ( this.attr('placeholder') === txt ) { this.attr('placeholder', ''); }
+      } else {
+        if ( this[0].value === txt ) { this[0].value = ""; }
+      }
     };
 
     var blurFn = function (wrapEl, txt) {
       wrapEl.removeClass(opts.focClass);
-      if ( this.value === "" ) { this.value = txt; }
+      if ( this.placeholder ) {
+        if ( this.attr('placeholder') === '' ) { this.attr('placeholder', txt); }
+      } else {
+        if ( this[0].value === "" ) { this[0].value = txt; }
+      }
     };
 
     var inputFn = function (wrapEl, ngModel) {
-      var val = this.value !== "" ? this.value : "";
+      this.attr('placeholder', '');
+      val = this[0].value !== "" ? this[0].value : "";
       val ? wrapEl.addClass(opts.popClass) : wrapEl.removeClass(opts.popClass);
     };
 
@@ -62,12 +75,14 @@ angular.module('kl.angular-float-label', [])
         var wrapEl   = createWrap(el)(scope);
         var labelEl  = createLabel(elId, labelTxt)(scope);
 
+        el.placeholder = checkPlaceholder();
+
         assemble(el, wrapEl, labelEl, elId);
         init(scope, el, attrs, wrapEl, labelTxt);
 
-        el.bind('focus', focusFn.bind(el[0], wrapEl, labelTxt));
-        el.bind('blur', blurFn.bind(el[0], wrapEl, labelTxt));
-        el.bind('input', inputFn.bind(el[0], wrapEl, ngModel));
+        el.bind('focus', focusFn.bind(el, wrapEl, labelTxt));
+        el.bind('blur', blurFn.bind(el, wrapEl, labelTxt));
+        el.bind('input', inputFn.bind(el, wrapEl, ngModel));
       }
     };
 

@@ -27,6 +27,10 @@ var app = angular.module('myModule', ['kl.angular-float-label', ...]);
   position: relative;
   input, label, textarea {
     transition: all ease-in-out .15s;
+    &::-webkit-input-placeholder { color: inherit; }
+    &::-moz-placeholder { color: inherit; } /* firefox 19+ */
+    &:-ms-input-placeholder { color: inherit; } /* ie */
+    &:-moz-placeholder { color: inherit; }
   }
   label {
     position: absolute;
@@ -65,8 +69,8 @@ var app = angular.module('myModule', ['kl.angular-float-label', ...]);
 ### To-dos
 - [ ] Write tests
 - [x] Move away from the oh-so-stupid setTimeout() on init.
-- [/] Handle HTML5 inline validation (its broken).
-  - [ ] Conditional placeholder attributes + inherited styling to enable HTML5 validations.
+- [x] Handle HTML5 inline validation.
+  - [x] Conditional placeholder attributes + inherited styling to enable HTML5 validations.
 - [x] Move DOM transforming to compile().
   - [/] Not fully switched to compile(), working as of now however.
 - [ ] Add hosted demo with examples // Improve README.
