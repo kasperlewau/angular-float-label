@@ -52,10 +52,12 @@ angular.module('kl.angular-float-label', [])
 
     var blurFn = function (wrapEl, txt) {
       wrapEl.removeClass(opts.focClass);
-      if ( this.placeholder && this.attr('placeholder') === '') {
-        this.attr('placeholder', txt);
-      } else if ( this[0].value === '') {
-        this[0].value = txt;
+      if ( this[0].validity.valid ) {
+        if ( this.placeholder && this.attr('placeholder') === '') {
+          this.attr('placeholder', txt);
+        } else if ( this[0].value === '') {
+          this[0].value = txt;
+        }
       }
     };
 

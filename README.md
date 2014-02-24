@@ -71,7 +71,7 @@ var app = angular.module('myModule', ['kl.angular-float-label', ...]);
 - [x] Move away from the oh-so-stupid setTimeout() on init.
 - [x] Handle HTML5 inline validation.
   - [x] Conditional placeholder attributes + inherited styling to enable HTML5 validations.
-  - [ ] *Some sort of flickering introduced with this upon multiple submits, check it out.*
+  - [x] *Some sort of flickering introduced with this upon multiple submits, check it out.*
 - [x] Move DOM transforming to compile().
   - [/] Not fully switched to compile(), working as of now however.
 - [ ] Add hosted demo with examples // Improve README.
