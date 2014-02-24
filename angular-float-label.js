@@ -1,73 +1,75 @@
-angular.module('kl.angular-float-label', []).
-  directive('floatLabel', function () {
-    var def = {
+angular.module('kl.angular-float-label', [])
+  .directive('floatLabel', function ($compile) {
+    var opts = {
       inpClass: 'fl-input',
       txtClass: 'fl-textarea',
       popClass: 'fl-populated',
       focClass: 'fl-focused'
     };
-    return {
-      restrict: "A",
-      require: ['^?form', 'ngModel'],
-      transclude: 'element',
-      scope: {},
-      controller: function ($scope, $element, $attrs, $transclude) {
-        $scope.createWrapper = function (el) {
-          var elTag = el[0].tagName === 'TEXTAREA' ? def.txtClass : def.inpClass;
-          var html  = '<div class="' + elTag + '"></div>';
-          return angular.element(html);
-        };
 
-        $scope.createLabel = function (elId, txt) {
-          var html = '<label for="' + elId + '">' + txt + '</label>';
-          return angular.element(html);
-        };
+    var createWrap = function (el) {
+      var type = el[0].tagName === 'TEXTAREA' ? opts.txtClass : opts.inpClass;
+      return $compile('<div class="' + type + '"></div>');
+    };
 
-        $scope.focus = function (wrap, txt) {
-          wrap.addClass(def.focClass);
-          if ( this.value === txt ) { this.value = ""; }
-        };
+    var createLabel = function (elId, txt) {
+      return $compile('<label for="' + elId + '">' + txt + '</label>');
+    };
 
-        $scope.blur = function (wrap, txt) {
-          wrap.removeClass(def.focClass);
-          if ( this.value === "" ) { this.value = txt; }
-        };
+    var assemble = function (el, wrapEl, labelEl, elId) {
+      el[0].name = elId;
+      el.wrap(wrapEl);
+      wrapEl.prepend(labelEl);
+    };
 
-        $scope.input = function (wrap, ngModel) {
-          var val = this.value !== "" ? this.value : "";
-          val ? wrap.addClass(def.popClass) : wrap.removeClass(def.popClass);
-          $scope.$apply(function () { ngModel.$setViewValue(val); });
-        };
-
-      },
-      link: function (scope, el, attrs, ctrl, transclude) {
-        var form     = ctrl[0];
-        var ngModel  = ctrl[1];
-        var cEl      = transclude(scope, function (clone) { return clone; });
-        var elId     = attrs.ngModel.replace('.', '-');
-        var wrap     = scope.createWrapper(cEl);
-        var label    = scope.createLabel(elId, attrs.floatLabel);
-        var labelTxt = label[0].innerHTML;
-
-        var init = scope.$parent.$watch(attrs.ngModel, function (x) {
-          var notFocused = document.activeElement !== cEl[0];
-          if ( x ) {
-            cEl[0].value = x;
-            wrap.addClass(def.popClass);
-          } else  {
-            wrap.removeClass(def.popClass);
-            if ( notFocused ) {
-              cEl[0].value = labelTxt;
-            }
+    var init = function (scope, el, attrs, wrapEl, labelTxt) {
+      return scope.$parent.$watch(attrs.ngModel, function (x) {
+        var notFocused = document.activeElement !== el[0];
+        if ( x ) {
+          el[0].value = x;
+          wrapEl.addClass(opts.popClass);
+        } else {
+          wrapEl.removeClass(opts.popClass);
+          if ( notFocused ) {
+            el[0].value = labelTxt;
           }
-        });
+        }
+      });
+    };
 
-        cEl[0].name = elId;
-        el.after(wrap.append(cEl).prepend(label));
+    var focusFn = function (wrapEl, txt) {
+      wrapEl.addClass(opts.focClass);
+      if ( this.value === txt ) { this.value = ""; }
+    };
 
-        cEl.bind('focus', scope.focus.bind(cEl[0], wrap, labelTxt));
-        cEl.bind('blur', scope.blur.bind(cEl[0], wrap, labelTxt));
-        cEl.bind('input', scope.input.bind(cEl[0], wrap, ngModel));
+    var blurFn = function (wrapEl, txt) {
+      wrapEl.removeClass(opts.focClass);
+      if ( this.value === "" ) { this.value = txt; }
+    };
+
+    var inputFn = function (wrapEl, ngModel) {
+      var val = this.value !== "" ? this.value : "";
+      val ? wrapEl.addClass(opts.popClass) : wrapEl.removeClass(opts.popClass);
+    };
+
+    var linker = {
+      restrict: "A",
+      scope: {},
+      require: 'ngModel',
+      link: function (scope, el, attrs, ngModel) {
+        var elId     = attrs.ngModel.replace('.', '-');
+        var labelTxt = attrs.floatLabel;
+        var wrapEl   = createWrap(el)(scope);
+        var labelEl  = createLabel(elId, labelTxt)(scope);
+
+        assemble(el, wrapEl, labelEl, elId);
+        init(scope, el, attrs, wrapEl, labelTxt);
+
+        el.bind('focus', focusFn.bind(el[0], wrapEl, labelTxt));
+        el.bind('blur', blurFn.bind(el[0], wrapEl, labelTxt));
+        el.bind('input', inputFn.bind(el[0], wrapEl, ngModel));
       }
-    }
-  });
+    };
+
+    return linker;
+  })
