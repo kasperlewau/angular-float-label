@@ -16,33 +16,37 @@ angular.module('kl.angular-float-label', [])
       return $compile('<div class="' + type + '"></div>');
     };
 
-    var createLabel = function (elId, txt) {
-      return $compile('<label for="' + elId + '">' + txt + '</label>');
+    var createLabel = function (eId, txt) {
+      return $compile('<label for="' + eId + '">' + txt + '</label>');
     };
 
-    var assemble = function (el, wrapEl, labelEl, elId) {
-      el[0].name = elId;
-      el.wrap(wrapEl);
-      wrapEl.prepend(labelEl);
+    var assemble = function (el, wrap, label, eId) {
+      el[0].name = eId;
+      el.wrap(wrap);
+      wrap.prepend(label);
     };
 
-    var init = function (scope, el, attrs, wrapEl, labelTxt) {
+    var init = function (scope, el, attrs, wrap, txt) {
       return scope.$parent.$watch(attrs.ngModel, function (x) {
-        var notFocused  = document.activeElement !== el[0];
-        if ( x ) {
-          el.placeholder ? el.attr('placeholder', x) : el[0].value = x;
-          wrapEl.addClass(opts.popClass);
-        } else {
-          wrapEl.removeClass(opts.popClass);
-          if ( notFocused ) {
-            el.placeholder ? el.attr('placeholder', labelTxt) : el[0].value = labelTxt;
-          }
-        }
+        x ? withValue(el, wrap, x) : withoutValue(el, wrap, txt);
       });
     };
 
-    var focusFn = function (wrapEl, txt) {
-      wrapEl.addClass(opts.focClass);
+    var withValue = function (el, wrap, val) {
+      el.placeholder ? el.attr('placeholder', val) : el[0].value = val;
+      wrap.addClass(opts.popClass);
+    };
+
+    var withoutValue = function (el, wrap, txt) {
+      var notFocused  = document.activeElement !== el[0];
+      wrap.removeClass(opts.popClass);
+      if ( notFocused ) {
+        el.placeholder ? el.attr('placeholder', txt) : el[0].value = txt;
+      }
+    };
+
+    var focusFn = function (wrap, txt) {
+      wrap.addClass(opts.focClass);
       if ( this.placeholder && this.attr('placeholder') === txt ) {
         this.attr('placeholder', '')
       } else if ( this[0].value === txt ) {
@@ -50,9 +54,9 @@ angular.module('kl.angular-float-label', [])
       }
     };
 
-    var blurFn = function (wrapEl, txt) {
-      wrapEl.removeClass(opts.focClass);
-      if ( this[0].validity.valid ) {
+    var blurFn = function (wrap, txt) {
+      wrap.removeClass(opts.focClass);
+      if ( !this[0].value || this[0].validity.valid ) {
         if ( this.placeholder && this.attr('placeholder') === '') {
           this.attr('placeholder', txt);
         } else if ( this[0].value === '') {
@@ -61,29 +65,28 @@ angular.module('kl.angular-float-label', [])
       }
     };
 
-    var inputFn = function (wrapEl) {
+    var inputFn = function (wrap) {
       this.attr('placeholder', '');
       val = this[0].value !== "" ? this[0].value : "";
-      val ? wrapEl.addClass(opts.popClass) : wrapEl.removeClass(opts.popClass);
+      val ? wrap.addClass(opts.popClass) : wrap.removeClass(opts.popClass);
     };
 
     var linker = {
       restrict: "A",
       scope: {},
       link: function (scope, el, attrs) {
-        var elId     = attrs.ngModel.replace('.', '-');
+        var eId      = attrs.ngModel.replace('.', '-');
         var labelTxt = attrs.floatLabel;
-        var wrapEl   = createWrap(el)(scope);
-        var labelEl  = createLabel(elId, labelTxt)(scope);
+        var wrap     = createWrap(el)(scope);
+        var label    = createLabel(eId, labelTxt)(scope);
 
         el.placeholder = checkPlaceholder();
+        assemble(el, wrap, label, eId);
+        init(scope, el, attrs, wrap, labelTxt);
 
-        assemble(el, wrapEl, labelEl, elId);
-        init(scope, el, attrs, wrapEl, labelTxt);
-
-        el.bind('focus', focusFn.bind(el, wrapEl, labelTxt));
-        el.bind('blur', blurFn.bind(el, wrapEl, labelTxt));
-        el.bind('input', inputFn.bind(el, wrapEl));
+        el.bind('focus', focusFn.bind(el, wrap, labelTxt));
+        el.bind('blur', blurFn.bind(el, wrap, labelTxt));
+        el.bind('input', inputFn.bind(el, wrap));
       }
     };
 
