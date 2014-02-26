@@ -3,16 +3,17 @@ Function.prototype.bind || (Function.prototype.bind = function(ctx){
   return angular.bind(ctx, this);
 });
 
-describe('A test suite', function () {
-  var inputEl;
-  var txtEl;
-  var $scope;
+// Test
+describe('angular-float-label', function () {
+  var txtEl   = null;
+  var inputEl = null;
+
   beforeEach(module('kl.angular-float-label'));
+
   beforeEach(inject(function ($compile, $rootScope) {
     rootScope = $rootScope;
-    rootScope.someModel = { name: 'asdf' };
-    inputEl = angular.element('<input float-label="Asdf" ng-model="someModel.name">');
     txtEl   = angular.element('<textarea float-label="Asdf" ng-model="someModel.name">');
+    inputEl = angular.element('<input float-label="Asdf" ng-model="someModel.name">');
     $compile(inputEl)($rootScope);
     $compile(txtEl)($rootScope);
   }));
@@ -20,10 +21,6 @@ describe('A test suite', function () {
   describe('it inits', function () {
     beforeEach(function () {
       rootScope.$digest();
-    });
-
-    it('sets the value from ng-model', function () {
-      expect(inputEl[0].value).to.equal(rootScope.someModel.name);
     });
 
     it('wraps', function () {
@@ -41,18 +38,42 @@ describe('A test suite', function () {
     it('has a label', function () {
       expect(inputEl[0].previousSibling.tagName).to.equal('LABEL');
     });
-  });
 
-  describe('functions', function () {
-    beforeEach(function () {
-      rootScope.$digest();
-    });
-    it('blurs', function () {
-      inputEl.blur;
-      console.log(inputEl);
-    });
-    it('inputs', function () {});
-    it('focuses', function () {});
-  });
+    describe('with value', function () {
+      beforeEach(function () {
+        rootScope.someModel = { name: 'asdf' };
+        rootScope.$digest();
+      });
 
+      it('sets the value from ng-model', function () {
+        expect(inputEl[0].value).to.equal(rootScope.someModel.name);
+      });
+
+      it('has the popClass', function () {
+        expect(inputEl[0].parentNode.classList.contains('fl-populated')).to.be.true;
+      });
+
+      it('sets the placeholder', function () {
+        expect(inputEl.attr('placeholder')).to.equal(rootScope.someModel.name);
+      });
+    });
+
+    describe('without value', function () {
+      beforeEach(function () {
+        rootScope.$digest();
+      });
+
+      it('sets the value from ng-model', function () {
+        expect(inputEl[0].value).to.equal('');
+      });
+
+      it('doesnt have the popClass', function () {
+        expect(inputEl[0].parentNode.classList.contains('fl-populated')).to.be.false;
+      });
+
+      it('sets the placeholder', function () {
+        // expect(inputEl.attr('placeholder')).to.equal( /* labelTxt */ );
+      });
+    });
+  });
 });
