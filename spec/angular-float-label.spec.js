@@ -76,4 +76,22 @@ describe('angular-float-label', function () {
       });
     });
   });
+
+  describe('functions', function () {
+    beforeEach(function () {
+      rootScope.$digest();
+    });
+
+    it('has an input function', function () {
+      expect(inputEl.isolateScope().fn.inputFn).to.be.defined;
+    });
+
+    it('has a focus function', function () {
+      expect(inputEl.isolateScope().fn.focusFn).to.be.defined;
+    });
+
+    it('has a blur function', function () {
+      expect(inputEl.isolateScope().fn.blurFn).to.be.defined;
+    });
+  });
 });
