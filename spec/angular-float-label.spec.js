@@ -82,16 +82,49 @@ describe('angular-float-label', function () {
       rootScope.$digest();
     });
 
-    it('has an input function', function () {
-      expect(inputEl.isolateScope().fn.inputFn).to.be.defined;
+    describe('input fn', function () {
+      it('is defined', function () {
+        expect(inputEl.isolateScope().fn.inputFn).to.be.defined;
+      });
+
+      it('gets called on input', function () {
+        before(function () {
+          // input
+        });
+        // expect fn.inputFn() to have been called
+      });
+      // expect value to be empty string if there is no value
+      // expect wrap to set/remove the populated class
     });
 
-    it('has a focus function', function () {
-      expect(inputEl.isolateScope().fn.focusFn).to.be.defined;
+    describe('focus fn', function () {
+      it('is defined', function () {
+        expect(inputEl.isolateScope().fn.focusFn).to.be.defined;
+      });
+
+      it('gets called on focus', function () {
+        before(function () {
+          // focus
+        });
+        // expect fn.focusFn() to have been called
+      });
+      // expect wrap to get the focus class
+      // expect placeholder to be empty string if placeholder equals attrs.floatLabel
     });
 
-    it('has a blur function', function () {
-      expect(inputEl.isolateScope().fn.blurFn).to.be.defined;
+    describe('blur fn', function () {
+      it('is defined', function () {
+        expect(inputEl.isolateScope().fn.blurFn).to.be.defined;
+      });
+
+      it('gets called on blur', function () {
+        before(function () {
+          // blur
+        });
+        // expect fn.blurFn() to have been called
+      });
+      // expect wrap to lose the focus class
+      // expect placeholder to be attrs.floatLabel if placeholder equals empty string && this[0].validity.valid
     });
   });
 });
