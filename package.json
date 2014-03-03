@@ -18,10 +18,7 @@
     "requirejs": "~2.1.11",
     "karma": "~0.10.9",
     "mocha": "~1.17.1",
-    "chai": "~1.9.0",
-    "karma-chai": "~0.1.0",
-    "karma": "~0.10.9",
-    "karma-mocha": "~0.1.1"
+    "karma-sinon-chai": "~0.1.4"
   },
   "scripts": {
     "test": "mocha"

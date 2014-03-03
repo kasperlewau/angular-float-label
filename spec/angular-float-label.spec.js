@@ -1,5 +1,5 @@
 // PhantomJS hackety-hack
-Function.prototype.bind || (Function.prototype.bind = function(ctx){
+Function.prototype.bind || (Function.prototype.bind = function (ctx) {
   return angular.bind(ctx, this);
 });
 
@@ -24,19 +24,19 @@ describe('angular-float-label', function () {
     });
 
     it('wraps', function () {
-      expect(inputEl[0].parentNode.tagName).to.equal('DIV');
+      inputEl[0].parentNode.tagName.should.equal('DIV');
     });
 
     it('wraps with textarea', function () {
-      expect(txtEl[0].parentNode.classList.contains('fl-textarea')).to.be.true;
+      txtEl[0].parentNode.classList.contains('fl-textarea').should.be.true;
     });
 
     it('wraps with input', function () {
-      expect(inputEl[0].parentNode.classList.contains('fl-input')).to.be.true;
+      inputEl[0].parentNode.classList.contains('fl-input').should.be.true;
     });
 
     it('has a label', function () {
-      expect(inputEl[0].previousSibling.tagName).to.equal('LABEL');
+      inputEl[0].previousSibling.tagName.should.equal('LABEL');
     });
 
     describe('with value', function () {
@@ -46,15 +46,15 @@ describe('angular-float-label', function () {
       });
 
       it('sets the value from ng-model', function () {
-        expect(inputEl[0].value).to.equal(rootScope.someModel.name);
+        inputEl[0].value.should.equal(rootScope.someModel.name);
       });
 
       it('has the popClass', function () {
-        expect(inputEl[0].parentNode.classList.contains('fl-populated')).to.be.true;
+        inputEl[0].parentNode.classList.contains('fl-populated').should.be.true;
       });
 
       it('sets the placeholder', function () {
-        expect(inputEl.attr('placeholder')).to.equal(rootScope.someModel.name);
+        inputEl.attr('placeholder').should.equal(rootScope.someModel.name);
       });
     });
 
@@ -64,15 +64,15 @@ describe('angular-float-label', function () {
       });
 
       it('sets the value from ng-model', function () {
-        expect(inputEl[0].value).to.equal('');
+        inputEl[0].value.should.equal('');
       });
 
       it('doesnt have the popClass', function () {
-        expect(inputEl[0].parentNode.classList.contains('fl-populated')).to.be.false;
+        inputEl[0].parentNode.classList.contains('fl-populated').should.be.false;
       });
 
       it('sets the placeholder', function () {
-        // expect(inputEl.attr('placeholder')).to.equal( /* labelTxt */ );
+        inputEl.attr('placeholder').should.equal("Asdf");
       });
     });
   });
@@ -82,47 +82,53 @@ describe('angular-float-label', function () {
       rootScope.$digest();
     });
 
+    describe('checkPlaceholder', function () {
+      it('is defined', function () {
+        inputEl.isolateScope().fn.checkPlaceholder.should.be.defined;
+      });
+    });
+
     describe('input fn', function () {
       it('is defined', function () {
-        expect(inputEl.isolateScope().fn.inputFn).to.be.defined;
+        inputEl.isolateScope().fn.inputFn.should.be.defined;
       });
 
       it('gets called on input', function () {
-        before(function () {
-          // input
-        });
-        // expect fn.inputFn() to have been called
+        var spy = sinon.spy(inputEl.isolateScope().fn, 'inputFn');
+        inputEl.triggerHandler('input');
+        spy.should.have.been.called();
       });
+
       // expect value to be empty string if there is no value
       // expect wrap to set/remove the populated class
     });
 
     describe('focus fn', function () {
       it('is defined', function () {
-        expect(inputEl.isolateScope().fn.focusFn).to.be.defined;
+        inputEl.isolateScope().fn.focusFn.should.be.defined;
       });
 
       it('gets called on focus', function () {
-        before(function () {
-          // focus
-        });
-        // expect fn.focusFn() to have been called
+        var spy = sinon.spy(inputEl.isolateScope().fn, 'focusFn');
+        inputEl.triggerHandler('focus');
+        spy.should.have.been.called();
       });
+
       // expect wrap to get the focus class
       // expect placeholder to be empty string if placeholder equals attrs.floatLabel
     });
 
     describe('blur fn', function () {
       it('is defined', function () {
-        expect(inputEl.isolateScope().fn.blurFn).to.be.defined;
+        inputEl.isolateScope().fn.blurFn.should.be.defined;
       });
 
       it('gets called on blur', function () {
-        before(function () {
-          // blur
-        });
-        // expect fn.blurFn() to have been called
+        var spy = sinon.spy(inputEl.isolateScope().fn, 'blurFn');
+        inputEl.triggerHandler('blur');
+        spy.should.have.been.called();
       });
+
       // expect wrap to lose the focus class
       // expect placeholder to be attrs.floatLabel if placeholder equals empty string && this[0].validity.valid
     });
